@@ -291,7 +291,7 @@ Type of AF detection area
 #define PDAF_SOLUTION_3			3	// no thread
 
 
-#define PDAF_SOLUTION				PDAF_SOLUTION_1//PDAF_SOLUTION_NO//PDAF_SOLUTION_1//PDAF_SOLUTION_2	//
+#define PDAF_SOLUTION				PDAF_SOLUTION_NO//PDAF_SOLUTION_NO//PDAF_SOLUTION_1//PDAF_SOLUTION_2	//
 
 
 #if (PDAF_SOLUTION_NO != PDAF_SOLUTION)
@@ -302,7 +302,7 @@ Type of AF detection area
 
 
 // trackid
-#define IMX586_CHECK_TRACKID			1
+#define IMX586_CHECK_TRACKID			0
 
 
 

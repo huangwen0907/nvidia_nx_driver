@@ -292,7 +292,7 @@ Type of AF detection area
 #define PDAF_SOLUTION_3			3	// no thread
 
 
-#define PDAF_SOLUTION				PDAF_SOLUTION_1//PDAF_SOLUTION_NO//PDAF_SOLUTION_1//PDAF_SOLUTION_2	//
+#define PDAF_SOLUTION				PDAF_SOLUTION_NO//PDAF_SOLUTION_NO//PDAF_SOLUTION_1//PDAF_SOLUTION_2	//
 
 
 #if (PDAF_SOLUTION_NO != PDAF_SOLUTION)
@@ -396,6 +396,7 @@ static const struct regmap_config sensor_regmap_config = {
          .use_single_rw = true,
 };
 
+#if 0
 static u16 gain_analog[36] = {
 	112,// 1db
 	211,
@@ -440,6 +441,56 @@ static u16 gain_analog[36] = {
 	1006,// 35db
 	1008,
 };
+#else
+static u16 gain_analog[360] = {
+	0,0,0,0,0,0,0,0,0,
+	//0.1-5.0db
+	112, 122, 133, 143, 153, 163, 173, 182, 192, 202, 
+	211, 220, 230, 239, 248, 257, 265, 274, 283, 291, 
+	300, 308, 316, 324, 332, 340, 348, 356, 363, 371, 
+	378, 386, 393, 400, 407, 415, 421, 428, 435, 442, 
+	449, 455, 462, 468, 475, 481, 487, 493, 499, 505, 
+	//5.1-10.0db
+	511, 517, 523, 529, 534, 540, 546, 551, 556, 562, 
+	567, 572, 577, 583, 588, 593, 598, 602, 607, 612, 
+	617, 621, 626, 631, 635, 640, 644, 648, 653, 657, 
+	661, 665, 669, 673, 678, 681, 685, 689, 693, 697, 
+	701, 704, 708, 712, 715, 719, 722, 726, 729, 733, 
+	//10.1-15.0db
+	736, 739, 742, 746, 749, 752, 755, 758, 761, 764, 
+	767, 770, 773, 776, 779, 782, 784, 787, 790, 793, 
+	795, 798, 800, 803, 806, 808, 811, 813, 815, 818, 
+	820, 823, 825, 827, 829, 832, 834, 836, 838, 840, 
+	842, 844, 847, 849, 851, 853, 855, 856, 858, 860, 
+	//15.1-20.0db
+	862, 864, 866, 868, 870, 871, 873, 875, 876, 878, 
+	880, 882, 883, 885, 886, 888, 890, 891, 893, 894, 
+	896, 897, 899, 900, 901, 903, 904, 906, 907, 908, 
+	910, 911, 912, 913, 915, 916, 917, 918, 920, 921, 
+	922, 923, 924, 926, 927, 928, 929, 930, 931, 932, 
+	//20.1-25.0db
+	933, 934, 935, 936, 937, 938, 939, 940, 941, 942, 
+	943, 944, 945, 946, 947, 948, 948, 949, 950, 951, 
+	952, 953, 953, 954, 955, 956, 956, 957, 958, 959, 
+	960, 960, 961, 962, 963, 964, 964, 965, 966, 966,  
+	967, 967, 968, 969, 969, 970, 970, 971, 972, 972, 
+	//25.1-30.0db
+	973, 973, 974, 974, 975, 976, 976, 977, 977, 978, 
+	979, 979, 980, 980, 981, 981, 982, 982, 983, 983, 
+	984, 984, 984, 985, 985, 985, 986, 986, 987, 987, 
+	988, 989, 989, 989, 990, 990, 990, 991, 991, 991, 
+	992, 992, 992, 993, 993, 994, 994, 995, 995, 996, 
+	//30.1-35.0db
+	996, 996, 997, 997, 997, 997, 998, 998, 998, 999, 
+	999, 999, 1000, 1000, 1000, 1001, 1001, 1001, 1002, 1002, 
+	1002, 1002, 1002, 1002, 1003, 1003, 1003, 1003, 1004, 1004, 
+	1004, 1004, 1004, 1004, 1005, 1005, 1005, 1005, 1005, 1005, 
+	1006, 1006, 1006, 1006, 1006, 1007, 1007, 1007, 1007, 1007, 
+	//36db
+	1008
+
+};
+#endif
 
 
 #if (PDAF_SOLUTION_1 == PDAF_SOLUTION)
@@ -2741,16 +2792,27 @@ static int imx586_set_gain(struct tegracam_device *tc_dev, s64 val)
 		return -1;
 	}
 	
-	temp = (u16)(val/ctrlprops->gain_factor);
+	// temp = (u16)(val/ctrlprops->gain_factor);
+	// if (IMX586_ANALOG_GAIN_DB_MIN > temp)
+	// 	temp = IMX586_ANALOG_GAIN_DB_MIN;
+	// else if (IMX586_ANALOG_GAIN_DB_MAX_4000 < temp && 360 == ctrlprops->max_gain_val)
+	// 	temp = IMX586_ANALOG_GAIN_DB_MAX_4000;
+	// else if (IMX586_ANALOG_GAIN_DB_MAX_8000 < temp && 240 == ctrlprops->max_gain_val)
+	// 	temp = IMX586_ANALOG_GAIN_DB_MAX_8000;
+
+	temp = (u16)(val/ctrlprops->step_gain_val);
+	//temp = (u16)val;
 	if (IMX586_ANALOG_GAIN_DB_MIN > temp)
 		temp = IMX586_ANALOG_GAIN_DB_MIN;
-	else if (IMX586_ANALOG_GAIN_DB_MAX_4000 < temp && 360 == ctrlprops->max_gain_val)
-		temp = IMX586_ANALOG_GAIN_DB_MAX_4000;
-	else if (IMX586_ANALOG_GAIN_DB_MAX_8000 < temp && 240 == ctrlprops->max_gain_val)
-		temp = IMX586_ANALOG_GAIN_DB_MAX_8000;
+	else if (IMX586_ANALOG_GAIN_DB_MAX_4000 * 10 < temp)
+		temp = IMX586_ANALOG_GAIN_DB_MAX_4000 * 10;
+	// else if (IMX586_ANALOG_GAIN_DB_MAX_4000 * 10 < temp && 360 == ctrlprops->max_gain_val)
+	// 	temp = IMX586_ANALOG_GAIN_DB_MAX_4000 * 10;
+	// else if (IMX586_ANALOG_GAIN_DB_MAX_8000 * 10 < temp && 240 == ctrlprops->max_gain_val)
+	// 	temp = IMX586_ANALOG_GAIN_DB_MAX_8000 * 10;
 
 	dev_dbg(dev, "%s, min_gain_val:%d, max_gain_val:%d, step_gain_val:%d, gain_factor:%d\n", __func__, 
-				ctrlprops->min_gain_val, ctrlprops->max_gain_val, ctrlprops->step_gain_val, ctrlprops->gain_factor);
+				ctrlprops->min_gain_val, IMX586_ANALOG_GAIN_DB_MAX_4000 * 10 , ctrlprops->step_gain_val, ctrlprops->gain_factor);
 	
 	dev_dbg(dev, "%s: set value: %lld, db gain: %d, anagle gani: %d\n",  __func__, val, temp, gain_analog[temp - 1]);
 	

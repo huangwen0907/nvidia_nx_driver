@@ -164,7 +164,7 @@
 //Module information Flag   0x01: Valid, other: Invalid
 #define IMX586_EEPROM_REGADDR_MODINFO		0x00
 
-//Module id   0X07£ºOfilm
+//Module id   0X07ï¿½ï¿½Ofilm
 #define IMX586_EEPROM_REGADDR_MODID			0x01
 
 //Sensor ID  0x01: IMX586
@@ -302,7 +302,7 @@ Type of AF detection area
 
 
 // trackid
-#define IMX586_CHECK_TRACKID			1
+#define IMX586_CHECK_TRACKID			0
 
 
 
